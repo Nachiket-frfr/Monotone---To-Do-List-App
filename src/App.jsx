@@ -1,11 +1,21 @@
 import './App.css';
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 function App() {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState(() => {
+    const savedTasks = localStorage.getItem('monotone_tasks');
+    return savedTasks ? JSON.parse(savedTasks) : [];
+  });
   const [input, setInput] = useState('');
   const [categoryInput, setCategoryInput] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('monotone_tasks', JSON.stringify(tasks));
+  }, [tasks]);
 
   const addTask = (e) => {
     e.preventDefault();
@@ -22,7 +32,7 @@ function App() {
       completed: false
     };
 
-    setTasks([...tasks, newTask]);
+    setTasks([newTask, ...tasks]);
     setInput('');
     setCategoryInput('');
     setErrorMessage('');
@@ -36,8 +46,32 @@ function App() {
     );
   };
 
+  const deleteTask = (id) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+
+  const clearCompleted = () => {
+    setTasks(tasks.filter((task) => !task.completed));
+  };
+
+  // Separate active and completed tasks
+  const activeTasks = tasks.filter((t) => !t.completed);
+  const completedTasks = tasks.filter((t) => t.completed);
+
   return (
     <Fragment>
+      <div className="App-Name">
+        <h1>Monotone</h1>
+        {/* History Icon */}
+        <button
+          className="Dropbox"
+          onClick={() => setIsDrawerOpen(true)}
+          aria-label="Open History"
+        >
+          <FontAwesomeIcon icon={faBars} style={{ color: 'var(--gold-primary)' }} />
+        </button>
+      </div>
+
       <form onSubmit={addTask}>
         <div className="Inputs">
           <input
@@ -61,7 +95,7 @@ function App() {
             <option value="Fitness">Fitness</option>
             <option value="Learning">Learning</option>
             <option value="Shopping">Shopping</option>
-            <option value="Finance">finance</option>
+            <option value="Finance">Finance</option>
             <option value="Projects">Projects</option>
           </select>
           <button type="submit">+</button>
@@ -70,6 +104,7 @@ function App() {
 
       {errorMessage && <p className="error">{errorMessage}</p>}
 
+      {/* Main Container - Active Tasks */}
       <div className="task-container">
         <div className="titles">
           <span></span>
@@ -78,7 +113,7 @@ function App() {
         </div>
 
         <ul className="task-list">
-          {tasks.map((task) => (
+          {activeTasks.map((task) => (
             <li key={task.id}>
               <input
                 type="checkbox"
@@ -86,11 +121,71 @@ function App() {
                 checked={task.completed}
                 onChange={() => toggleTask(task.id)}
               />
-              <p className={task.completed ? 'completed' : ''}>{task.text}</p>
-              <p className={task.completed ? 'completed' : ''}>{task.category}</p>
+              <p>{task.text}</p>
+              <p>{task.category}</p>
             </li>
           ))}
         </ul>
+
+        {activeTasks.length === 0 && (
+          <p className="empty-state">No active tasks. Add one above!</p>
+        )}
+      </div>
+
+      {/* Sidebar Overlaying Structure */}
+      <div
+        className={`drawer-overlay ${isDrawerOpen ? 'open' : ''}`}
+        onClick={() => setIsDrawerOpen(false)}
+      />
+
+      {/* Sliding History Drawer */}
+      <div className={`drawer ${isDrawerOpen ? 'open' : ''}`}>
+        <div className="drawer-header">
+          <h2>History ({completedTasks.length})</h2>
+          <button
+            className="close-btn"
+            onClick={() => setIsDrawerOpen(false)}
+          >
+            <FontAwesomeIcon icon={faTimes} />
+          </button>
+        </div>
+
+        {completedTasks.length > 0 && (
+          <button className="clear-all-btn" onClick={clearCompleted}>
+            Clear History
+          </button>
+        )}
+
+        <ul className="history-list">
+          {completedTasks.map((task) => (
+            <li key={task.id} className="history-item">
+              <div>
+                <p className="history-text">{task.text}</p>
+                <span className="history-category">{task.category}</span>
+              </div>
+              <div className="history-actions">
+                <button
+                  className="restore-btn"
+                  onClick={() => toggleTask(task.id)}
+                  title="Move back to Active"
+                >
+                  ↩
+                </button>
+                <button
+                  className="delete-btn"
+                  onClick={() => deleteTask(task.id)}
+                  title="Delete permanently"
+                >
+                  ×
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        {completedTasks.length === 0 && (
+          <p className="empty-state">No completed tasks in history.</p>
+        )}
       </div>
     </Fragment>
   );
