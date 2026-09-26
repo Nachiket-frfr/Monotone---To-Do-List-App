@@ -12,13 +12,25 @@
   --error: #e56b6b;
 }
 
+/* Global Box Sizing & Body Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body {
   background-color: var(--bg-deep);
   color: var(--text-main);
   font-family: 'Montserrat', sans-serif;
   display: flex;
   justify-content: center;
-  padding-top: 40px;
+  margin: 0;
+  padding: 40px 16px;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  max-width: 500px;
 }
 
 /* Form Controls */
@@ -91,7 +103,7 @@ select.select {
 
 /* Layout Container */
 .task-container {
-  margin-top: 30px;
+  margin-top: 24px;
   background: var(--bg-card);
   border-radius: 8px;
   border: 1px solid var(--gold-border);
@@ -154,7 +166,7 @@ select.select {
 .task-list {
   display: grid;
   grid-template-columns: 2.5em 1fr 1fr;
-  gap: 12px 12px;
+  gap: 12px;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -179,25 +191,14 @@ select.select {
 }
 
 /* ==========================================
-   MOBILE-FIRST & RESPONSIVE ADJUSTMENTS
+   MOBILE RESPONSIVE ADJUSTMENTS (under 600px)
    ========================================== */
 
-/* Main Container Constraints */
-body {
-  margin: 0;
-  padding: 20px 12px;
-  box-sizing: border-box;
-}
-
-#root {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-/* --- Mobile Breakpoint (Phones under 600px) --- */
 @media (max-width: 600px) {
-  /* Stack inputs vertically for easy typing */
+  body {
+    padding: 16px 12px;
+  }
+
   .Inputs {
     flex-direction: column;
     align-items: stretch;
@@ -205,18 +206,13 @@ body {
     padding: 14px;
   }
 
-  .input {
-    width: 100% !important;
-    box-sizing: border-box;
-    height: 44px; /* Optimal touch target */
-    font-size: 15px;
-  }
-
+  /* 16px font-size prevents iOS Safari auto-zoom on input focus */
+  .input,
   select.select {
     width: 100% !important;
-    margin: 0 !important;
     height: 44px;
-    font-size: 15px;
+    font-size: 16px;
+    margin: 0 !important;
   }
 
   .Inputs button {
@@ -225,32 +221,29 @@ body {
     font-size: 22px;
   }
 
-  /* Responsive Grid for Tasks */
   .task-container {
     padding: 14px 10px;
   }
 
   .titles,
   .task-list {
-    grid-template-columns: 2em 1fr 1fr;
+    grid-template-columns: 2.2em 1fr 1fr;
     gap: 8px 10px;
   }
 
   .titles h3 {
     font-size: 11px;
     letter-spacing: 0.5px;
-    padding: 2px 0;
   }
 
   .task-list p {
     font-size: 13px;
-    word-break: break-word; /* Prevents long text from pushing off screen */
+    word-break: break-word;
     overflow-wrap: break-word;
   }
 
-  /* Larger touch target for the checkbox */
   .Toggle {
-    width: 1.4em;
-    height: 1.4em;
+    width: 1.3em;
+    height: 1.3em;
   }
 }
