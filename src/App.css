@@ -12,7 +12,6 @@
   --error: #e56b6b;
 }
 
-/* Global Box Sizing & Body Reset */
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -33,7 +32,39 @@ body {
   max-width: 500px;
 }
 
-/* Form Controls */
+/* Header Component */
+.App-Name {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.App-Name h1 {
+  font-family: 'Cinzel', serif;
+  color: var(--gold-light);
+  font-size: 28px;
+  margin: 0;
+  padding-left: 5px;
+}
+
+.Dropbox {
+  background: transparent;
+  border: 1px solid var(--gold-border);
+  color: var(--gold-primary);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.Dropbox:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--gold-primary);
+}
+
+/* Input Form Controls */
 .Inputs {
   display: flex;
   align-items: center;
@@ -59,7 +90,8 @@ select.select {
 }
 
 .input {
-  width: 260px;
+  width: 240px;
+  flex: 1;
 }
 
 .input::placeholder {
@@ -76,7 +108,7 @@ select.select {
   cursor: pointer;
 }
 
-.Inputs button {
+.Inputs button.add-btn {
   width: 40px;
   height: 40px;
   background: linear-gradient(135deg, #d4af37 0%, #aa7c11 100%);
@@ -87,9 +119,10 @@ select.select {
   border-radius: 6px;
   cursor: pointer;
   transition: transform 0.15s ease, filter 0.2s ease;
+  flex-shrink: 0;
 }
 
-.Inputs button:hover {
+.Inputs button.add-btn:hover {
   filter: brightness(1.15);
   transform: translateY(-1px);
 }
@@ -101,7 +134,7 @@ select.select {
   padding-left: 4px;
 }
 
-/* Layout Container */
+/* Active Task Container */
 .task-container {
   margin-top: 24px;
   background: var(--bg-card);
@@ -162,7 +195,7 @@ select.select {
   transform: translate(-50%, -50%);
 }
 
-/* Task Grid */
+/* Task List */
 .task-list {
   display: grid;
   grid-template-columns: 2.5em 1fr 1fr;
@@ -184,105 +217,7 @@ select.select {
   padding: 8px 0;
 }
 
-.task-list p.completed {
-  text-decoration: line-through;
-  color: var(--text-muted);
-  opacity: 0.5;
-}
-
-/* ==========================================
-   MOBILE RESPONSIVE ADJUSTMENTS (under 600px)
-   ========================================== */
-
-@media (max-width: 600px) {
-  body {
-    padding: 16px 12px;
-  }
-
-  .Inputs {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-    padding: 14px;
-  }
-
-  /* 16px font-size prevents iOS Safari auto-zoom on input focus */
-  .input,
-  select.select {
-    width: 100% !important;
-    height: 44px;
-    font-size: 16px;
-    margin: 0 !important;
-  }
-
-  .Inputs button {
-    width: 100%;
-    height: 44px;
-    font-size: 22px;
-  }
-
-  .task-container {
-    padding: 14px 10px;
-  }
-
-  .titles,
-  .task-list {
-    grid-template-columns: 2.2em 1fr 1fr;
-    gap: 8px 10px;
-  }
-
-  .titles h3 {
-    font-size: 11px;
-    letter-spacing: 0.5px;
-  }
-
-  .task-list p {
-    font-size: 13px;
-    word-break: break-word;
-    overflow-wrap: break-word;
-  }
-
-  .Toggle {
-    width: 1.3em;
-    height: 1.3em;
-  }
-}
-
-.App-Name{
-    background: linear-gradient(135deg, #d4af37 0%, #aa7c11 100%);
-    color: black;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items:  center ;
-    width: 100vh;
-    height: 8vh;
-}
-
-
-.App-Name h1{
-  font-family:'Courier New', Courier, monospace;
-  padding-left: 5px;
-}
-
-/* Header button styling */
-.Dropbox {
-  background: transparent;
-  border: 1px solid var(--gold-border);
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 18px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.Dropbox:hover {
-  background: rgba(212, 175, 55, 0.1);
-  border-color: var(--gold-primary);
-}
-
-/* Sidebar Drawer & Overlay */
+/* History Drawer & Overlay */
 .drawer-overlay {
   position: fixed;
   top: 0;
@@ -305,8 +240,8 @@ select.select {
 .drawer {
   position: fixed;
   top: 0;
-  right: -320px;
-  width: 300px;
+  right: -360px;
+  width: min(320px, 85vw);
   height: 100vh;
   background: var(--bg-card);
   border-left: 1px solid var(--gold-border);
@@ -316,7 +251,6 @@ select.select {
   flex-direction: column;
   transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 101;
-  box-sizing: border-box;
 }
 
 .drawer.open {
@@ -355,7 +289,7 @@ select.select {
   background: transparent;
   border: 1px solid rgba(229, 107, 107, 0.4);
   color: var(--error);
-  padding: 6px;
+  padding: 6px 10px;
   border-radius: 4px;
   font-size: 12px;
   cursor: pointer;
@@ -382,11 +316,19 @@ select.select {
   border-bottom: 1px solid rgba(212, 175, 55, 0.1);
 }
 
+.history-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 70%;
+}
+
 .history-text {
   margin: 0;
   font-size: 14px;
   text-decoration: line-through;
   color: var(--text-muted);
+  word-break: break-word;
 }
 
 .history-category {
@@ -396,7 +338,7 @@ select.select {
 
 .history-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .restore-btn {
@@ -411,7 +353,7 @@ select.select {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
 }
 
@@ -424,4 +366,57 @@ select.select {
   color: var(--text-muted);
   font-size: 13px;
   margin: 20px 0 10px;
+}
+
+/* Mobile Breakpoint Adjustments (< 600px) */
+@media (max-width: 600px) {
+  body {
+    padding: 16px 12px;
+  }
+
+  .Inputs {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .input,
+  select.select {
+    width: 100% !important;
+    height: 44px;
+    font-size: 16px;
+  }
+
+  .Inputs button.add-btn {
+    width: 100%;
+    height: 44px;
+    font-size: 22px;
+  }
+
+  .task-container {
+    padding: 14px 10px;
+  }
+
+  .titles,
+  .task-list {
+    grid-template-columns: 2.2em 1fr 1fr;
+    gap: 8px 10px;
+  }
+
+  .titles h3 {
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+
+  .task-list p {
+    font-size: 13px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .Toggle {
+    width: 1.3em;
+    height: 1.3em;
+  }
 }

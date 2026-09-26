@@ -3,6 +3,16 @@ import { useState, Fragment, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 
+const CATEGORIES = [
+  'Work',
+  'Personal',
+  'Fitness',
+  'Learning',
+  'Shopping',
+  'Finance',
+  'Projects'
+];
+
 function App() {
   const [tasks, setTasks] = useState(() => {
     const savedTasks = localStorage.getItem('monotone_tasks');
@@ -54,7 +64,6 @@ function App() {
     setTasks(tasks.filter((task) => !task.completed));
   };
 
-  // Separate active and completed tasks
   const activeTasks = tasks.filter((t) => !t.completed);
   const completedTasks = tasks.filter((t) => t.completed);
 
@@ -62,13 +71,12 @@ function App() {
     <Fragment>
       <div className="App-Name">
         <h1>Monotone</h1>
-        {/* History Icon */}
         <button
           className="Dropbox"
           onClick={() => setIsDrawerOpen(true)}
           aria-label="Open History"
         >
-          <FontAwesomeIcon icon={faBars} style={{ color: 'var(--gold-primary)' }} />
+          <FontAwesomeIcon icon={faBars} />
         </button>
       </div>
 
@@ -90,15 +98,13 @@ function App() {
             className="select"
           >
             <option value="">Select a Category</option>
-            <option value="Work">Work</option>
-            <option value="Personal">Personal</option>
-            <option value="Fitness">Fitness</option>
-            <option value="Learning">Learning</option>
-            <option value="Shopping">Shopping</option>
-            <option value="Finance">Finance</option>
-            <option value="Projects">Projects</option>
+            {CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
           </select>
-          <button type="submit">+</button>
+          <button type="submit" className="add-btn">+</button>
         </div>
       </form>
 
@@ -132,19 +138,20 @@ function App() {
         )}
       </div>
 
-      {/* Sidebar Overlaying Structure */}
+      {/* Drawer Overlay */}
       <div
         className={`drawer-overlay ${isDrawerOpen ? 'open' : ''}`}
         onClick={() => setIsDrawerOpen(false)}
       />
 
-      {/* Sliding History Drawer */}
+      {/* History Drawer */}
       <div className={`drawer ${isDrawerOpen ? 'open' : ''}`}>
         <div className="drawer-header">
           <h2>History ({completedTasks.length})</h2>
           <button
             className="close-btn"
             onClick={() => setIsDrawerOpen(false)}
+            aria-label="Close History"
           >
             <FontAwesomeIcon icon={faTimes} />
           </button>
@@ -159,7 +166,7 @@ function App() {
         <ul className="history-list">
           {completedTasks.map((task) => (
             <li key={task.id} className="history-item">
-              <div>
+              <div className="history-details">
                 <p className="history-text">{task.text}</p>
                 <span className="history-category">{task.category}</span>
               </div>
